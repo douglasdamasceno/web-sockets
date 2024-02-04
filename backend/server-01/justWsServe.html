@@ -1,0 +1,35 @@
+<script>
+  let ws = new WebSocket("ws://localhost:8000");
+
+  ws.onopen = (event) => {
+    console.log("position", location.coords);
+    ws.send(
+      `Hello, Server mensagem do frontend!, ${
+        location ? location.coords : "Sem permissão"
+      }`
+    );
+  };
+
+  ws.onmessage = (event) => {
+    const response = "Mensagem recebida: " + event.data;
+    console.log(response);
+
+    let p = document.createElement("p");
+    p.innerHTML = response;
+    document.body.appendChild(p);
+  };
+
+  function getLocation() {
+    navigator.geolocation.getCurrentPosition((position) => {
+      ws.send(
+        `Hello, Server mensagem do frontend!, ${position.coords.latitude}, ${position.coords.longitude}`
+      );
+    });
+  }
+</script>
+
+<h1>Titulo</h1>
+
+<button onclick="ws.send(`Mensagem do frontend`)">Enviar mensagem</button>
+
+<button onclick="getLocation()">Enviar localização</button>
